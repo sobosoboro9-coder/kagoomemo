@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>カゴメモ - 家計簿アプリ</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#f97316" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="logo">🧺 カゴメモ</div>
+  <nav id="main-nav">
+    <button class="tab-btn active" data-tab="kakeibo">💰 家計簿</button>
+    <button class="tab-btn" data-tab="calendar">📅 カレンダー</button>
+    <button class="tab-btn" data-tab="fridge">🥬 冷蔵庫管理</button>
+    <button class="tab-btn" data-tab="settings">⚙️ 設定</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ========== 家計簿 ========== -->
+  <div class="tab-panel active" id="panel-kakeibo">
+
+    <!-- 月次サマリー（収支バランス） -->
+    <div class="kakeibo-summary">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <button id="btn-view-prev-month"
+          style="background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:0.9rem;
+          cursor:pointer;padding:4px 10px;border-radius:8px;font-weight:700;">◀</button>
+        <div class="summary-month" id="summary-month"></div>
+        <button id="btn-view-next-month"
+          style="background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:0.9rem;
+          cursor:pointer;padding:4px 10px;border-radius:8px;font-weight:700;">▶</button>
+      </div>
+
+      <!-- 収支バランス（収入 − 支出） -->
+      <div class="summary-balance-label">今月の収支</div>
+      <div class="summary-balance" id="summary-balance">¥0</div>
+      <div class="summary-balance-note" id="summary-balance-note"></div>
+
+      <!-- 収入・支出の内訳 -->
+      <div class="summary-io-row">
+        <div class="summary-io">
+          <div class="summary-io-label">収入</div>
+          <div class="summary-io-amount income" id="summary-income">¥0</div>
+        </div>
+        <div class="summary-io">
+          <div class="summary-io-label">支出</div>
+          <div class="summary-io-amount expense" id="summary-expense">¥0</div>
+        </div>
+      </div>
+
+      <!-- 予算バー -->
+      <div class="summary-budget-row">
+        <span>予算</span>
+        <span id="summary-budget-text">未設定</span>
+      </div>
+      <div class="budget-banner-bar-wrap" style="margin-top:6px;">
+        <div class="budget-banner-bar" id="summary-budget-bar"></div>
+      </div>
+    </div>
+
+    <!-- カテゴリ別予算バー -->
+    <div class="card" id="cat-budget-card" style="display:none;">
+      <h2>📊 カテゴリ別予算</h2>
+      <div id="cat-budget-bars"></div>
+    </div>
+
+    <!-- 入力セクション（過去月閲覧時は非表示） -->
+    <div id="kakeibo-inputs">
+
+    <!-- レシート読み取り -->
+    <div class="card">
+      <h2>📷 レシートを読み取る</h2>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px;">
+        レシートを読み取ると品目をカテゴリ別に自動仕分けします。食料品は冷蔵庫の在庫にも自動追加されます。
+      </p>
+
+      <!-- タブ切り替え -->
+      <div class="receipt-tabs">
+        <button class="receipt-tab active" data-receipt="camera">📷 カメラで撮影</button>
+        <button class="receipt-tab" data-receipt="upload">🖼️ 写真を選択</button>
+      </div>
+
+      <!-- カメラモード -->
+      <div id="receipt-mode-camera" class="receipt-mode" style="margin-top:10px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <button class="btn btn-secondary" id="btn-receipt-camera">📷 カメラを起動</button>
+          <button class="btn btn-secondary" id="btn-stop-receipt" style="display:none;">⏹ 停止</button>
+        </div>
+        <div id="receipt-area" style="display:none;">
+          <video id="receipt-video" autoplay playsinline
+            style="width:100%;max-width:400px;border-radius:10px;border:2px solid var(--border);display:block;"></video>
+          <div style="margin-top:6px;font-size:0.75rem;color:var(--text-muted);">
+            💡 レシート全体が映るように調整してください
+          </div>
+          <button class="btn btn-primary" id="btn-capture-receipt" style="margin-top:8px;">
+            📸 撮影してAIで読み取る
+          </button>
+        </div>
+        <canvas id="receipt-canvas" style="display:none;"></canvas>
+      </div>
+
+      <!-- アップロードモード -->
+      <div id="receipt-mode-upload" class="receipt-mode" style="display:none;margin-top:10px;">
+        <div id="receipt-drop-area" class="drop-area">
+          <div class="drop-area-icon">🖼️</div>
+          <div class="drop-area-text">写真をここにドラッグ&ドロップ</div>
+          <div class="drop-area-sub">または</div>
+          <label class="btn btn-secondary" style="cursor:pointer;display:inline-block;">
+            📁 ファイルを選択
+            <input type="file" id="receipt-file-input" accept="image/*" style="display:none;" />
+          </label>
+        </div>
+        <div id="receipt-upload-preview" style="display:none;margin-top:10px;">
+          <img id="receipt-upload-img"
+            style="width:100%;max-width:400px;border-radius:10px;border:2px solid var(--border);display:block;" />
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn btn-primary" id="btn-analyze-upload">🤖 AIで読み取る</button>
+            <button class="btn btn-secondary btn-sm" id="btn-reset-upload">🔄 別の写真</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 読み取り結果プレビュー -->
+      <div id="receipt-preview" style="display:none;margin-top:14px;">
+        <div style="font-size:0.85rem;font-weight:700;color:var(--accent);margin-bottom:10px;">
+          🤖 AIの読み取り結果
+        </div>
+        <div id="receipt-preview-content"></div>
+        <!-- 登録ボタン -->
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btn-register-receipt">✅ 家計簿に記録する</button>
+          <button class="btn btn-secondary" id="btn-more-receipt">➕ さらに読む</button>
+          <button class="btn btn-secondary" id="btn-add-food-from-receipt">🥬 食料品を在庫に追加</button>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;">
+          ※内容を確認してから登録してください
+        </div>
+      </div>
+      <!-- キュー状態バー -->
+      <div id="receipt-queue-bar"
+        style="display:none;margin-top:8px;padding:8px 12px;
+        background:#fff7ed;border:1.5px solid var(--border);border-radius:10px;
+        align-items:center;justify-content:space-between;gap:8px;">
+        <span style="font-size:0.8rem;">
+          📋 <span id="receipt-queue-count">0</span>枚 蓄積中
+        </span>
+        <button class="btn btn-primary btn-sm" id="btn-register-all-receipts">まとめて登録</button>
+      </div>
+      <div id="receipt-status" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 収入を記録 -->
+    <div class="card">
+      <h2>💵 収入を記録する</h2>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px;">
+        給料・お小遣い・臨時収入などを記録できます
+      </p>
+      <div class="form-group">
+        <label>内容</label>
+        <input type="text" id="income-name" placeholder="例：給料、バイト代、お小遣い" />
+      </div>
+      <div class="form-group">
+        <label>金額（円）</label>
+        <input type="number" id="income-amount" placeholder="例：80000" />
+      </div>
+      <div class="form-group">
+        <label>種類</label>
+        <select id="income-category">
+          <option value="salary">💼 給料・バイト代</option>
+          <option value="allowance">🎁 お小遣い・仕送り</option>
+          <option value="bonus">✨ 臨時収入</option>
+          <option value="other_income">📦 その他</option>
+        </select>
+      </div>
+      <button class="btn btn-income" id="btn-add-income">収入を記録する</button>
+      <div id="income-status" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 支出を手動入力 -->
+    <div class="card">
+      <h2>➖ 支出を手動で記録する</h2>
+
+      <!-- 音声入力 -->
+      <div style="margin-bottom:14px;">
+        <button class="btn btn-secondary" id="btn-voice-expense">🎤 音声で記録</button>
+        <div id="voice-expense-status" style="margin-top:6px;"></div>
+        <p style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">例：「スーパーで千五百円」</p>
+      </div>
+
+      <div class="form-group">
+        <label>店名・内容</label>
+        <input type="text" id="expense-name" placeholder="例：スーパー、コンビニ" />
+      </div>
+      <div class="form-group">
+        <label>金額（円）</label>
+        <input type="number" id="expense-amount" placeholder="例：1500" />
+      </div>
+      <div class="form-group">
+        <label>カテゴリ</label>
+        <select id="expense-category">
+          <option value="food">🥦 食料品</option>
+          <option value="daily">🧴 日用品</option>
+          <option value="medicine">💊 医薬品・衛生用品</option>
+          <option value="electric">💡 家電・雑貨</option>
+          <option value="transport">🚃 交通費</option>
+          <option value="other">📦 その他</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="btn-add-expense">支出を記録する</button>
+      <div id="expense-status" style="margin-top:10px;"></div>
+    </div>
+
+    </div><!-- /#kakeibo-inputs -->
+
+    <!-- グラフ -->
+    <div class="card">
+      <h2>📊 カテゴリ別支出</h2>
+      <canvas id="category-chart"></canvas>
+      <div id="category-legend" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;"></div>
+    </div>
+
+    <!-- 月別推移 -->
+    <div class="card">
+      <h2>📈 月別の収支推移</h2>
+      <canvas id="monthly-chart"></canvas>
+      <div class="chart-legend-row">
+        <span class="chart-legend-item"><span class="legend-dot income"></span>収入</span>
+        <span class="chart-legend-item"><span class="legend-dot expense"></span>支出</span>
+      </div>
+    </div>
+
+    <!-- 前月比較 -->
+    <div class="card" id="month-comparison-card">
+      <h2 id="month-comparison-title">📊 前月比較</h2>
+      <div id="month-comparison-list"></div>
+    </div>
+
+    <!-- 履歴 -->
+    <div class="card">
+      <h2>📋 入出金履歴</h2>
+      <div id="history-list"></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" id="btn-export-csv">📥 CSV出力</button>
+        <button class="btn btn-secondary btn-sm" id="btn-share-report">📤 シェア</button>
+        <button class="btn btn-danger btn-sm" id="btn-clear-expenses">🗑 今月をリセット</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== カレンダー ========== -->
+  <div class="tab-panel" id="panel-calendar">
+    <div class="card">
+      <div class="cal-nav">
+        <button class="btn btn-secondary btn-sm" id="btn-cal-prev">◀</button>
+        <span id="calendar-header" style="font-weight:700;font-size:0.95rem;"></span>
+        <button class="btn btn-secondary btn-sm" id="btn-cal-next">▶</button>
+      </div>
+      <div id="calendar-grid"></div>
+      <div id="calendar-day-detail"></div>
+    </div>
+  </div>
+
+  <!-- ========== 冷蔵庫管理 ========== -->
+  <div class="tab-panel" id="panel-fridge">
+    <div class="card">
+      <h2>🥬 冷蔵庫の在庫</h2>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">
+        家計簿タブでレシートを読み取ると「食料品」が自動でここに追加されます
+      </p>
+
+      <!-- 手動追加 -->
+      <div class="input-row" style="margin-bottom:10px;">
+        <input type="text" id="food-input" placeholder="食材名（例：卵、牛乳）カンマ区切りで複数入力可" />
+        <button class="btn btn-voice" id="btn-voice-food">🎤</button>
+        <button class="btn btn-primary" id="btn-add-food">追加</button>
+      </div>
+      <div id="voice-food-status"></div>
+      <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:10px;">
+        💡 「卵, 牛乳, キャベツ」のようにカンマ区切りで複数まとめて登録できます
+      </p>
+
+      <!-- 在庫一覧 -->
+      <div id="food-list-items"></div>
+    </div>
+  </div>
+
+  <!-- ========== 設定 ========== -->
+  <div class="tab-panel" id="panel-settings">
+    <div class="card">
+      <h2>⚙️ 予算設定</h2>
+      <div class="form-group">
+        <label>月次予算（円）</label>
+        <input type="number" id="setting-budget" placeholder="例：30000" />
+      </div>
+      <h3 style="font-size:0.88rem;color:var(--accent);margin:14px 0 10px;">カテゴリ別予算</h3>
+      <div class="form-group">
+        <label>🥦 食料品</label>
+        <input type="number" id="setting-budget-food" placeholder="例：15000" />
+      </div>
+      <div class="form-group">
+        <label>🧴 日用品</label>
+        <input type="number" id="setting-budget-daily" placeholder="例：5000" />
+      </div>
+      <div class="form-group">
+        <label>💊 医薬品・衛生用品</label>
+        <input type="number" id="setting-budget-medicine" placeholder="例：3000" />
+      </div>
+      <div class="form-group">
+        <label>💡 家電・雑貨</label>
+        <input type="number" id="setting-budget-electric" placeholder="例：3000" />
+      </div>
+      <div class="form-group">
+        <label>🚃 交通費</label>
+        <input type="number" id="setting-budget-transport" placeholder="例：5000" />
+      </div>
+      <div class="form-group">
+        <label>🏠 固定費</label>
+        <input type="number" id="setting-budget-fixed" placeholder="例：60000" />
+      </div>
+      <div class="form-group">
+        <label>📦 その他</label>
+        <input type="number" id="setting-budget-other" placeholder="例：5000" />
+      </div>
+
+      <h3 style="font-size:0.88rem;color:var(--accent);margin:16px 0 10px;">Gemini APIキー</h3>
+      <p style="font-size:0.76rem;color:var(--text-muted);margin-bottom:8px;line-height:1.6;">
+        レシートの自動読み取り機能を使うには、Gemini APIキーが必要です。
+        <a href="https://aistudio.google.com/" target="_blank" rel="noopener" style="color:var(--accent);">Google AI Studio</a>
+        で無料で取得できます（Googleアカウントでログイン →「Get API key」）。
+        入力したキーはこの端末内にのみ保存され、外部には送信されません。
+      </p>
+      <div class="form-group">
+        <label>APIキー</label>
+        <input type="password" id="setting-api-key" placeholder="AIzaSy... で始まるキーを貼り付け" autocomplete="off" />
+      </div>
+
+      <button class="btn btn-primary" id="btn-save-settings">保存する</button>
+      <div id="settings-status" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 固定費の登録 -->
+    <div class="card">
+      <h2>🏠 固定費の自動記録</h2>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">
+        家賃・サブスクなど毎月決まった支出を登録しておくと、支払日が来た時に家計簿へ自動で記録されます（手入力不要）
+      </p>
+      <div class="form-group">
+        <label>名称</label>
+        <input type="text" id="fixed-name" placeholder="例：家賃、Netflix、電気代" />
+      </div>
+      <div class="form-group">
+        <label>金額（円）</label>
+        <input type="number" id="fixed-amount" placeholder="例：50000" />
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;justify-content:space-between;">
+          カテゴリ
+          <button type="button" id="btn-show-fixed-cat"
+            style="font-size:0.73rem;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">
+            ＋ カテゴリを追加
+          </button>
+        </label>
+        <select id="fixed-category">
+          <option value="fixed">🏠 固定費</option>
+          <option value="other">📦 その他</option>
+        </select>
+        <div id="fixed-cat-picker"
+          style="display:none;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+      </div>
+      <div class="form-group">
+        <label>毎月の支払日</label>
+        <select id="fixed-day">
+          <option value="">選択してください</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="btn-add-fixed">固定費を登録する</button>
+      <div id="fixed-status" style="margin-top:10px;"></div>
+
+      <h3 style="font-size:0.88rem;color:var(--accent);margin:16px 0 10px;">登録済みの固定費</h3>
+      <div id="fixed-cost-list"></div>
+    </div>
+  </div>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

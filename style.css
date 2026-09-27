@@ -1,0 +1,754 @@
+/* =============================================
+   カゴメモ - スタイルシート
+   オレンジ暖色系・やわらかい・親しみやすい
+============================================= */
+
+:root {
+  --bg: #fff8f2;
+  --surface: #ffffff;
+  --surface2: #fff3eb;
+  --accent: #f97316;
+  --accent2: #fb923c;
+  --accent3: #fbbf24;
+  --accent-light: #fed7aa;
+  --danger: #ef4444;
+  --success: #16a34a;
+  --text: #431407;
+  --text-muted: #a16207;
+  --border: #fed7aa;
+  --border-soft: #ffedd5;
+  --radius: 16px;
+  --shadow: 0 2px 12px rgba(249,115,22,0.08);
+  --shadow-hover: 0 6px 20px rgba(249,115,22,0.18);
+}
+
+/* =============================================
+   リセット・ベーススタイル
+============================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* =============================================
+   ヘッダー
+============================================= */
+header {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 16px rgba(249,115,22,0.3);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.logo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+/* =============================================
+   タブナビゲーション
+============================================= */
+nav {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.2);
+  padding: 4px;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 7px 13px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.tab-btn.active {
+  background: #fff;
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* =============================================
+   メインコンテンツ
+============================================= */
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 20px 14px;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* =============================================
+   カード
+============================================= */
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.card h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--accent);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* =============================================
+   予算バナー
+============================================= */
+.budget-banner {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(249,115,22,0.3);
+}
+.budget-banner-label {
+  font-size: 0.78rem;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.budget-banner-amount {
+  font-family: 'Outfit', monospace;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.budget-banner-bar-wrap {
+  background: rgba(255,255,255,0.3);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.budget-banner-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.9);
+  transition: width 0.5s ease;
+}
+.budget-banner-bar.over { background: #fca5a5; }
+
+/* =============================================
+   共通UIコンポーネント
+============================================= */
+.btn {
+  padding: 9px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 14px rgba(249,115,22,0.45);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--accent);
+  border: 1.5px solid var(--border);
+}
+.btn-secondary:hover { background: var(--accent-light); }
+.btn-danger { background: #ef4444; color: #fff; }
+.btn-danger:hover { background: #dc2626; }
+.btn-voice {
+  background: #fff0f0;
+  color: #dc2626;
+  border: 1.5px solid #fca5a5;
+  padding: 9px 12px;
+}
+.btn-voice:hover { background: #fee2e2; }
+.btn-sm { padding: 5px 11px; font-size: 0.76rem; }
+
+input, select {
+  width: 100%;
+  padding: 9px 13px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.88rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+}
+input::placeholder { color: #d97706; opacity: 0.6; }
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.input-row input { flex: 1; min-width: 120px; margin: 0; }
+
+label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.form-group { margin-bottom: 12px; }
+
+/* バッジ */
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.badge-green  { background: #dcfce7; color: #16a34a; }
+.badge-blue   { background: #dbeafe; color: #1d4ed8; }
+.badge-orange { background: #ffedd5; color: var(--accent); }
+
+/* ステータスメッセージ */
+.status-msg {
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  margin-top: 10px;
+}
+.status-msg.success { background: #dcfce7; border: 1px solid #86efac; color: #15803d; }
+.status-msg.error   { background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; }
+.status-msg.info    { background: #ffedd5; border: 1px solid var(--border); color: var(--accent); }
+
+/* 音声インジケーター */
+.mic-indicator {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #dc2626;
+  display: inline-block;
+  margin-right: 6px;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(1.3); }
+}
+
+/* =============================================
+   買い物リスト
+============================================= */
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1.5px solid var(--border-soft);
+  transition: all 0.2s;
+}
+.list-item:hover { border-color: var(--accent); }
+.list-item.checked {
+  opacity: 0.5;
+  text-decoration: line-through;
+  background: #f1f5f9;
+}
+.list-item input[type="checkbox"] {
+  width: 18px; height: 18px;
+  min-width: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.list-item-name { flex: 1; font-size: 0.88rem; font-weight: 500; }
+.list-item-price {
+  font-family: 'Outfit', monospace;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.list-item-del {
+  background: none;
+  border: none;
+  color: #d1d5db;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+.list-item-del:hover { color: var(--danger); }
+
+.list-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 2px solid var(--border-soft);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.list-total { font-size: 0.88rem; color: var(--text-muted); }
+.list-total-amount {
+  font-family: 'Outfit', monospace;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-left: 4px;
+}
+.over-warn {
+  font-size: 0.78rem;
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+  font-weight: 700;
+}
+
+/* =============================================
+   食材管理
+============================================= */
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1.5px solid var(--border-soft);
+  transition: all 0.2s;
+}
+.food-item:hover { border-color: var(--accent); }
+.food-item-name { font-size: 0.88rem; font-weight: 500; }
+.food-item-date { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+/* =============================================
+   家計簿
+============================================= */
+.kakeibo-summary {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 14px;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(249,115,22,0.3);
+}
+.summary-month {
+  font-size: 0.78rem;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.summary-total {
+  font-family: 'Outfit', monospace;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.summary-label { font-size: 0.78rem; opacity: 0.85; margin-top: 2px; }
+.summary-budget-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-top: 12px;
+  opacity: 0.9;
+}
+
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border-left: 4px solid var(--accent-light);
+  box-shadow: var(--shadow);
+}
+.expense-item.food      { border-left-color: var(--accent); }
+.expense-item.daily     { border-left-color: var(--accent3); }
+.expense-item.transport { border-left-color: #60a5fa; }
+.expense-item.other     { border-left-color: #d1d5db; }
+.expense-info .ename  { font-size: 0.88rem; font-weight: 600; }
+.expense-info .edate  { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.expense-amount {
+  font-family: 'Outfit', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+/* グラフ */
+/* 円グラフは正方形に近い形にする */
+#category-chart {
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
+  border-radius: 10px;
+  display: block;
+  margin: 0 auto;
+}
+
+#monthly-chart {
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+}
+
+/* カテゴリ別予算バー */
+.cat-budget-row {
+  margin-bottom: 10px;
+}
+.cat-budget-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.cat-bar-wrap {
+  background: var(--surface2);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+.cat-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.5s ease;
+}
+.cat-bar.over { background: var(--danger); }
+
+/* =============================================
+   レスポンシブ
+============================================= */
+@media (max-width: 640px) {
+  header { padding: 10px 14px; }
+  .logo  { font-size: 1.1rem; }
+  main   { padding: 14px 10px; }
+  .card  { padding: 14px; }
+  .summary-total { font-size: 2rem; }
+  .budget-banner-amount { font-size: 1.6rem; }
+  .input-row { gap: 6px; }
+}
+
+/* =============================================
+   レシート読み取りUI
+============================================= */
+
+/* タブ切り替え */
+.receipt-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  padding: 4px;
+  border-radius: 10px;
+  width: fit-content;
+}
+.receipt-tab {
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.receipt-tab:hover { color: var(--accent); }
+.receipt-tab.active {
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 1px 6px rgba(249,115,22,0.15);
+}
+
+/* ドラッグ&ドロップエリア */
+.drop-area {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  background: var(--surface2);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.drop-area:hover {
+  border-color: var(--accent);
+  background: #fff7ed;
+}
+.drop-area.dragover {
+  border-color: var(--accent);
+  background: #ffedd5;
+  transform: scale(1.01);
+}
+.drop-area-icon { font-size: 2.2rem; margin-bottom: 8px; }
+.drop-area-text { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+.drop-area-sub  { font-size: 0.75rem; color: var(--text-muted); margin: 6px 0; }
+
+/* =============================================
+   収支バランス（第1弾で追加）
+============================================= */
+.summary-balance-label {
+  font-size: 0.78rem;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+.summary-balance {
+  font-family: 'Outfit', monospace;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+.summary-balance.plus  { color: #ffffff; }
+.summary-balance.minus { color: #fee2e2; }
+.summary-balance-note {
+  font-size: 0.74rem;
+  opacity: 0.95;
+  margin-top: 4px;
+  min-height: 1em;
+}
+
+/* 収入・支出の内訳 */
+.summary-io-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.summary-io {
+  flex: 1;
+  background: rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.summary-io-label {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  margin-bottom: 2px;
+}
+.summary-io-amount {
+  font-family: 'Outfit', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.summary-io-amount.income  { color: #dcfce7; }
+.summary-io-amount.expense { color: #ffedd5; }
+
+/* 収入記録ボタン */
+.btn-income {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(22,163,74,0.3);
+}
+.btn-income:hover {
+  box-shadow: 0 4px 14px rgba(22,163,74,0.45);
+  transform: translateY(-1px);
+}
+
+/* =============================================
+   入出金履歴（収入・支出統合）
+============================================= */
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border-left: 4px solid var(--accent-light);
+  box-shadow: var(--shadow);
+}
+.history-item.income { border-left-color: #22c55e; }
+.history-item.expense.food      { border-left-color: var(--accent); }
+.history-item.expense.daily     { border-left-color: var(--accent3); }
+.history-item.expense.medicine  { border-left-color: #34d399; }
+.history-item.expense.electric  { border-left-color: #60a5fa; }
+.history-item.expense.transport { border-left-color: #a78bfa; }
+.history-item.expense.other     { border-left-color: #d1d5db; }
+.history-info .hname { font-size: 0.88rem; font-weight: 600; }
+.history-info .hdate { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.history-amount {
+  font-family: 'Outfit', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.history-amount.income  { color: #16a34a; }
+.history-amount.expense { color: #dc2626; }
+
+/* 月別推移グラフの凡例 */
+.chart-legend-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 10px;
+}
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.legend-dot.income  { background: rgba(22,163,74,0.5); }
+.legend-dot.expense { background: #f97316; border-radius: 50%; }
+
+/* =============================================
+   固定費（第2弾で追加）
+============================================= */
+.fixed-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1.5px solid var(--border-soft);
+  border-left: 4px solid #f472b6;
+}
+.fixed-info .fixed-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.fixed-info .fixed-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.fixed-posted-badge {
+  font-size: 0.66rem;
+  font-weight: 700;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+.fixed-pending-badge {
+  font-size: 0.66rem;
+  font-weight: 700;
+  background: #fce7f3;
+  color: #be185d;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+/* =============================================
+   収支カレンダー
+============================================= */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-header-cell {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 0;
+}
+.cal-cell {
+  min-height: 58px;
+  padding: 5px 3px 4px;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.cal-cell:hover { border-color: var(--accent); }
+.cal-cell.empty {
+  background: transparent;
+  cursor: default;
+  border-color: transparent;
+}
+.cal-day-num {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 3px;
+}
+.cal-expense {
+  font-size: 0.6rem;
+  color: #dc2626;
+  text-align: center;
+  font-family: 'Outfit', monospace;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.cal-income {
+  font-size: 0.6rem;
+  color: #16a34a;
+  text-align: center;
+  font-family: 'Outfit', monospace;
+  font-weight: 700;
+  line-height: 1.4;
+}
